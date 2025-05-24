@@ -1,68 +1,97 @@
+![GitHub Finder Banner](./banner.png)
+
+
+
 # 🔍 GitHub Finder
 
-A polished GitHub profile search app built with React + TypeScript + Tailwind CSS, with full support for:
+A full-stack GitHub profile search app built with React + TypeScript + Tailwind CSS on the frontend, and Node.js + Express on the backend. 
+
+Includes:
 
 - 🌗 Dark mode
 - 🔁 Pagination of repositories
 - 🌀 Loading states
-- 🔍 User search with GitHub REST API
-- 💡 Fully commented and styled using modern Tailwind classes
+- 🔍 GitHub REST API integration via a backend proxy
+- 🧠 Fully commented and styled using modern Tailwind classes
+
+---
 
 ## 📦 Tech Stack
 
+### Frontend
 - React + TypeScript (Vite)
 - Tailwind CSS
 - GitHub REST API
-- Deployed via GitHub Pages or Vercel (suggested)
+- Axios / native fetch
+
+### Backend
+- Node.js + Express
+- CORS + Helmet
+- Proxy endpoint: `/api/github/:username?page=n`
+
+---
 
 ## ✨ Features
 
-- Search GitHub usernames and view profiles
-- Displays name, avatar, bio, followers, public repos
-- Paginated list of latest repositories
-- Light/Dark mode toggle
-- Loading spinner during API fetch
-- Form input disabled while loading
-- Ready for backend extension (Node.js / Express / MongoDB)
+- Search any GitHub user
+- View name, avatar, bio, follower stats, and public repos
+- Paginated list of repositories (5 per page)
+- Dark mode toggle
+- Loading spinner during fetch
+- Backend handles GitHub API calls and pagination
+- Secure CORS + error handling
 
-## 💻 Installation
+---
+
+## 💻 Installation (Local Setup)
 
 ```bash
+# Clone repo
 git clone https://github.com/M-S-Brough/github-finder.git
 cd github-finder
+
+# Frontend
 npm install
 npm run dev
+
+# In a separate terminal: start backend
+cd backend
+npm install
+node server.js
 ```
 
-## 🛠 Planned Backend
+> Frontend: http://localhost:5173  
+> Backend: http://localhost:5000
 
-A Node.js backend (planned):
-- API proxy for GitHub to avoid rate limits
-- Search history storage
-- Caching using Redis or memory
-- Auth (optional for favorites)
-- API route: `/api/github/:username`
+---
 
 ## 🧪 Usage
 
-- Open the app
-- Search for a GitHub username (e.g. `vercel`)
-- View user info, paginated repositories
-- Toggle dark mode for style preview
+- Open the frontend in your browser
+- Enter a GitHub username (e.g. `vercel`)
+- View their profile and 5 latest repos
+- Use pagination buttons to browse more
+- Toggle light/dark theme
 
-## 🧠 Educational Goals
+---
+
+## 🧠 Learning Goals
 
 This project demonstrates:
-- Real API integration
-- Component-based design
-- UX improvements via spinners, states
-- Tailwind styling best practices
-- Scalability via backend-ready architecture
+- End-to-end data flow across full-stack
+- Use of REST APIs through a custom proxy
+- Frontend architecture and UI/UX best practices
+- Pagination, state handling, and error feedback
+- Backend expansion potential (caching, logging, auth)
+
+---
 
 ## 📁 Folder Structure
 
 ```
 github-finder/
+├── backend/
+│   └── server.js
 ├── public/
 ├── src/
 │   ├── components/
@@ -74,11 +103,13 @@ github-finder/
 └── README.md
 ```
 
+---
+
 ## 👨‍💻 Author
 
 **Mark Brough**  
-[GitHub Profile](https://github.com/M-S-Brough)
+[GitHub Profile →](https://github.com/M-S-Brough)
 
 ---
 
-> This project was built to demonstrate full-stack capability using modern frontend tech, with backend extensibility in mind.
+> This full-stack GitHub Finder app demonstrates real-world skills in frontend UI, backend API proxying, and user-friendly features like dark mode and loading feedback.

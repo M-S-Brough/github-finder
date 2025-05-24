@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import './index.css';
 import Search from './components/Search';
 
-// Define types for GitHub user and repo data
 interface GitHubUser {
   login: string;
   name: string;
@@ -24,14 +23,13 @@ interface GitHubRepo {
 }
 
 function App() {
-  const [user, setUser] = useState<GitHubUser | null>(null);       // GitHub user data
-  const [repos, setRepos] = useState<GitHubRepo[]>([]);            // GitHub repos
-  const [error, setError] = useState<string | null>(null);         // Error message
-  const [page, setPage] = useState(1);                              // Repo pagination
-  const [currentUser, setCurrentUser] = useState<string>('');       // Currently searched username
-  const [loading, setLoading] = useState(false);                    // Loading indicator
+  const [user, setUser] = useState<GitHubUser | null>(null);
+  const [repos, setRepos] = useState<GitHubRepo[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [currentUser, setCurrentUser] = useState<string>('');
+  const [loading, setLoading] = useState(false);
 
-  // Load dark mode preference on app start
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
@@ -39,16 +37,6 @@ function App() {
     }
   }, []);
 
-  // Fetch GitHub repos for a user and page number
-  const fetchRepos = async (username: string, pageNum: number) => {
-    const res = await fetch(
-      `https://api.github.com/users/${username}/repos?sort=updated&per_page=5&page=${pageNum}`
-    );
-    const data: GitHubRepo[] = await res.json();
-    setRepos(data);
-  };
-
-  // Handle search form submission
   const handleSearch = async (username: string) => {
     try {
       setLoading(true);
@@ -58,14 +46,13 @@ function App() {
       setPage(1);
       setCurrentUser(username);
 
-      // Fetch user profile
-      const userRes = await fetch(`https://api.github.com/users/${username}`);
-      if (!userRes.ok) throw new Error('User not found');
-      const userData: GitHubUser = await userRes.json();
-      setUser(userData);
+      //  Fetch from backend
+      const res = await fetch(`http://localhost:5000/api/github/${username}`);
+      if (!res.ok) throw new Error('User not found');
 
-      // Fetch first page of repos
-      await fetchRepos(username, 1);
+      const data = await res.json();
+      setUser(data.profile);
+      setRepos(data.repos);
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -73,16 +60,29 @@ function App() {
     }
   };
 
-  // Refetch repos on page change
   useEffect(() => {
-    if (currentUser) {
-      fetchRepos(currentUser, page);
+  if (!currentUser) return;
+
+  const fetchReposFromBackend = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`http://localhost:5000/api/github/${currentUser}?page=${page}`);
+      if (!res.ok) throw new Error('Failed to fetch repositories');
+      const data = await res.json();
+      setRepos(data.repos);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
     }
-  }, [page]);
+  };
+
+  fetchReposFromBackend();
+}, [page]);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-tr from-slate-100 to-indigo-50 dark:from-slate-900 dark:to-indigo-950 p-6">
-      
       {/* Dark mode toggle */}
       <div className="flex justify-end max-w-md mx-auto mb-4">
         <button
@@ -99,15 +99,12 @@ function App() {
         </button>
       </div>
 
-      {/* App title */}
       <h1 className="text-5xl font-extrabold text-center text-indigo-700 dark:text-indigo-300 drop-shadow-sm mb-6">
         GitHub Finder
       </h1>
 
-      {/* Search bar */}
       <Search onSearch={handleSearch} loading={loading} />
 
-      {/* Loading spinner */}
       {loading && (
         <div className="flex flex-col items-center mt-6">
           <div className="w-10 h-10 border-4 border-indigo-300 border-t-transparent rounded-full animate-spin" />
@@ -115,10 +112,8 @@ function App() {
         </div>
       )}
 
-      {/* Error message */}
       {error && <p className="text-red-600 text-center mt-4">{error}</p>}
 
-      {/* User profile card */}
       {user && (
         <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-2xl shadow-md ring-1 ring-slate-200 dark:ring-slate-700 text-center">
           <img
@@ -138,7 +133,6 @@ function App() {
             View GitHub Profile →
           </a>
 
-          {/* Stats */}
           <div className="grid grid-cols-3 gap-4 text-sm text-center mt-6">
             <div>
               <p className="text-indigo-600 dark:text-indigo-400 font-semibold">{user.public_repos}</p>
@@ -156,14 +150,12 @@ function App() {
         </div>
       )}
 
-      {/* Repo list + pagination */}
       {repos.length > 0 && (
         <div className="max-w-md mx-auto mt-6 space-y-4">
           <h3 className="text-xl font-semibold text-indigo-700 dark:text-indigo-300 text-center mb-2">
             Repositories – Page {page}
           </h3>
 
-          {/* Repository cards */}
           {repos.map((repo) => (
             <div
               key={repo.id}
@@ -187,7 +179,6 @@ function App() {
             </div>
           ))}
 
-          {/* Pagination controls */}
           <div className="flex justify-between mt-4">
             <button
               onClick={() => setPage((p) => Math.max(p - 1, 1))}
