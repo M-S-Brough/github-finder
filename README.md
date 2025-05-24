@@ -34,7 +34,7 @@ npm install
 npm run dev
 ```
 
-## 🛠 Planned Backend (optional)
+## 🛠 Planned Backend
 
 A Node.js backend (planned):
 - API proxy for GitHub to avoid rate limits
